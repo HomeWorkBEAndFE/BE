@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.techzen.bai1.Model.DictionaryModel;
 import java.util.HashMap;
 import java.util.Map;
+import vn.techzen.bai1.Dto.ApiResponse;
 
 @RestController
 public class DictionaryController {
@@ -27,13 +28,15 @@ public class DictionaryController {
     }
 
     @GetMapping("/api/dictionary/search")
-    public ResponseEntity<?> searchDictionary(@RequestParam(defaultValue = "") String vocabulary) {
+    public ResponseEntity<ApiResponse<?>> searchDictionary(@RequestParam(defaultValue = "") String vocabulary) {
         DictionaryModel foundWord = dictionaryMap.get(vocabulary.trim().toLowerCase());
 
         if (foundWord != null) {
-            return ResponseEntity.ok(foundWord);
+            return ResponseEntity.ok().body(new ApiResponse<>(404, null, foundWord));
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy từ vựng được tra trong từ điển");
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>(404, "Không tìm thấy từ vựng được tra trong từ điển", null));
         }
     }
 
