@@ -12,7 +12,8 @@ import java.net.http.HttpClient;
 @NoArgsConstructor
 @AllArgsConstructor
 public enum ErrorCode {
-    EMPLOYEE_NOT_EXISTED(40401, "Student is not existed", HttpStatus.NOT_FOUND);
+    EMPLOYEE_NOT_EXISTED(40401, "Employee is not existed", HttpStatus.NOT_FOUND),
+    INVALID_UUID_FORMAT(40001, "Invalid UUID format", HttpStatus.BAD_REQUEST);
 
     Integer code;
     String message;
