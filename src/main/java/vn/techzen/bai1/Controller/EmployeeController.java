@@ -1,49 +1,57 @@
 package vn.techzen.bai1.Controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import vn.techzen.bai1.Dto.ApiResponse;
+import vn.techzen.bai1.Dto.Exception.AppException;
+import vn.techzen.bai1.Dto.Exception.ErrorCode;
+import vn.techzen.bai1.Dto.JsonResponse;
 import vn.techzen.bai1.Model.EmployeeModel;
-import vn.techzen.bai1.Service.EmployeeService;
+import vn.techzen.bai1.Service.IEmployeeService;
+import vn.techzen.bai1.Service.impl.EmployeeService;
 
 import java.util.List;
 import java.util.UUID;
 
 @RestController
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequestMapping("/api/employees")
 public class EmployeeController {
 
-    @Autowired
-    private EmployeeService employeeService;
+    IEmployeeService employeeService;
 
     @GetMapping
-    public ResponseEntity<List<EmployeeModel>> getAllEmployees() {
+    public ResponseEntity<?> getAllEmployees() {
         List<EmployeeModel> employees = employeeService.getAllEmployees();
-        return new ResponseEntity<>(employees, HttpStatus.OK);
+        return JsonResponse.ok(employees);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EmployeeModel> getEmployee(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<EmployeeModel>> getEmployee(@PathVariable UUID id) {
         EmployeeModel employee = employeeService.getEmployee(id);
         if (employee != null) {
-            return new ResponseEntity<>(employee, HttpStatus.OK);
+            return JsonResponse.ok(employee);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED);
         }
     }
 
     @PostMapping
-    public ResponseEntity<EmployeeModel> addEmployee(@RequestBody EmployeeModel employee) {
+    public ResponseEntity<?> addEmployee(@RequestBody EmployeeModel employee) {
         if (employee == null || employee.getName() == null || employee.getDob() == null || employee.getGender() == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         employeeService.addEmployee(employee);
-        return new ResponseEntity<>(employee, HttpStatus.CREATED);
+        return JsonResponse.created(employee);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<EmployeeModel> updateEmployee(@PathVariable UUID id, @RequestBody EmployeeModel updatedEmployee) {
+    public ResponseEntity<?> updateEmployee(@PathVariable UUID id, @RequestBody EmployeeModel updatedEmployee) {
         if (updatedEmployee == null || updatedEmployee.getName() == null || updatedEmployee.getDob() == null || updatedEmployee.getGender() == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -51,9 +59,9 @@ public class EmployeeController {
         EmployeeModel existingEmployee = employeeService.getEmployee(id);
         if (existingEmployee != null) {
             employeeService.updateEmployee(id, updatedEmployee);
-            return new ResponseEntity<>(updatedEmployee, HttpStatus.OK);
+            return JsonResponse.ok(updatedEmployee);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED);
         }
     }
 
@@ -62,9 +70,9 @@ public class EmployeeController {
         EmployeeModel existingEmployee = employeeService.getEmployee(id);
         if (existingEmployee != null) {
             employeeService.deleteEmployee(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return JsonResponse.noContent();
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED);
         }
     }
 }
