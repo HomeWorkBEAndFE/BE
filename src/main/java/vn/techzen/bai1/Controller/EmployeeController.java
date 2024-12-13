@@ -67,12 +67,16 @@ public class EmployeeController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteEmployee(@PathVariable UUID id) {
-        EmployeeModel existingEmployee = employeeService.getEmployee(id);
-        if (existingEmployee != null) {
-            employeeService.deleteEmployee(id);
-            return JsonResponse.noContent();
-        } else {
-            throw new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED);
+        try {
+            EmployeeModel existingEmployee = employeeService.getEmployee(id);
+            if (existingEmployee != null) {
+                employeeService.deleteEmployee(id);
+                return JsonResponse.noContent();
+            } else {
+                throw new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED);
+            }
+        } catch (IllegalArgumentException e) {
+            throw new AppException(ErrorCode.INVALID_UUID_FORMAT); // Bạn có thể thêm lỗi này vào enum ErrorCode
         }
     }
 }
