@@ -13,7 +13,6 @@ import vn.techzen.bai1.Service.IEmployeeService;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -60,12 +59,12 @@ public class EmployeeService implements IEmployeeService {
         List<EmployeeModel> employees = employeeRepository.getAll();
 
         return employees.stream()
-                .filter(e -> name == null || e.getName().toLowerCase().contains(name.toLowerCase())) // Filter by name
-                .filter(e -> dobFrom == null || !e.getDob().isBefore(dobFrom)) // Filter by dobFrom
-                .filter(e -> dobTo == null || !e.getDob().isAfter(dobTo)) // Filter by dobTo
-                .filter(e -> gender == null || e.getGender() == gender) // Filter by gender
-                .filter(e -> phone == null || e.getPhone().contains(phone)) // Filter by phone
-                .filter(e -> departmentId == null || e.getDepartmentId().equals(departmentId)) // Filter by departmentId
+                .filter(e -> name == null || e.getName().toLowerCase().contains(name.toLowerCase()))
+                .filter(e -> dobFrom == null || !e.getDob().isBefore(dobFrom))
+                .filter(e -> dobTo == null || !e.getDob().isAfter(dobTo))
+                .filter(e -> gender == null || e.getGender() == gender)
+                .filter(e -> phone == null || e.getPhone().contains(phone))
+                .filter(e -> departmentId == null || e.getDepartmentId().equals(departmentId))
                 .filter(e -> {
                     if (salaryRange == null) {
                         return true;

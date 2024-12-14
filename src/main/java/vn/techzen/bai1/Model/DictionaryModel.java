@@ -29,6 +29,7 @@ public class DictionaryModel {
     }
 
     public void setVietNameVocabulary(String VietNameVocabulary) {
+
         this.VietNameVocabulary = VietNameVocabulary;
     }
 

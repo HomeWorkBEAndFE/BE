@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import vn.techzen.bai1.Dto.Exception.AppException;
+import vn.techzen.bai1.Dto.Exception.ErrorCode;
 import vn.techzen.bai1.Dto.JsonResponse;
 import vn.techzen.bai1.Model.DepartmentModel;
 import vn.techzen.bai1.Service.IDepartmentService;
@@ -22,6 +24,9 @@ public class DepartmentController {
     @GetMapping
     public ResponseEntity<?> getAllDepartment() {
         List<DepartmentModel> departments = departmentService.getAllDepartments();
+        if (departments.isEmpty()) {
+            throw new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED);
+        }
         return JsonResponse.ok(departments);
     }
 }
