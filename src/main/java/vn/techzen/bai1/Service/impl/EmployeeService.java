@@ -4,12 +4,18 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
+import vn.techzen.bai1.Dto.EmployeeResponse;
 import vn.techzen.bai1.Model.EmployeeModel;
-import vn.techzen.bai1.Respository.IEmployeeRepository;
+import vn.techzen.bai1.Model.Gender;
+import vn.techzen.bai1.Repository.IEmployeeRepository;
+import vn.techzen.bai1.Repository.impl.DepartmentRepository;
 import vn.techzen.bai1.Service.IEmployeeService;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -17,10 +23,11 @@ import java.util.UUID;
 public class EmployeeService implements IEmployeeService {
 
     IEmployeeRepository employeeRepository;
+    DepartmentRepository departmentRepository = new DepartmentRepository();
 
 
     @Override
-    public List<EmployeeModel> getAllEmployees() {
+    public List<EmployeeResponse> getAllEmployees() {
         return employeeRepository.getAllEmployees();
     }
 
@@ -48,5 +55,37 @@ public class EmployeeService implements IEmployeeService {
     @Override
     public void deleteEmployee(UUID id) {
         employeeRepository.deleteEmployee(id);
+    }
+    public List<EmployeeResponse> getFilteredEmployees(String name, LocalDate dobFrom, LocalDate dobTo, Gender gender, String salaryRange, String phone, Integer departmentId) {
+        List<EmployeeModel> employees = employeeRepository.getAll();
+
+        return employees.stream()
+                .filter(e -> name == null || e.getName().toLowerCase().contains(name.toLowerCase())) // Filter by name
+                .filter(e -> dobFrom == null || !e.getDob().isBefore(dobFrom)) // Filter by dobFrom
+                .filter(e -> dobTo == null || !e.getDob().isAfter(dobTo)) // Filter by dobTo
+                .filter(e -> gender == null || e.getGender() == gender) // Filter by gender
+                .filter(e -> phone == null || e.getPhone().contains(phone)) // Filter by phone
+                .filter(e -> departmentId == null || e.getDepartmentId().equals(departmentId)) // Filter by departmentId
+                .filter(e -> {
+                    if (salaryRange == null) {
+                        return true;
+                    }
+                    switch (salaryRange) {
+                        case "lt5":
+                            return e.getSalary() < 5000000;
+                        case "5-10":
+                            return e.getSalary() >= 5000000 && e.getSalary() < 10000000;
+                        case "10-20":
+                            return e.getSalary() >= 10000000 && e.getSalary() < 20000000;
+                        case "gte20":
+                            return e.getSalary() >= 20000000;
+                        default:
+                            return true;
+                    }
+                })
+                .map(e -> new EmployeeResponse(
+                        employeeRepository.getEmployee(e.getId()),
+                        departmentRepository.getDepartmentNameById(e.getDepartmentId()) ))
+                .collect(Collectors.toList());
     }
 }

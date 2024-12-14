@@ -3,17 +3,20 @@ package vn.techzen.bai1.Controller;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.techzen.bai1.Dto.ApiResponse;
+import vn.techzen.bai1.Dto.EmployeeResponse;
 import vn.techzen.bai1.Dto.Exception.AppException;
 import vn.techzen.bai1.Dto.Exception.ErrorCode;
 import vn.techzen.bai1.Dto.JsonResponse;
 import vn.techzen.bai1.Model.EmployeeModel;
+import vn.techzen.bai1.Model.Gender;
 import vn.techzen.bai1.Service.IEmployeeService;
-import vn.techzen.bai1.Service.impl.EmployeeService;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,7 +30,7 @@ public class EmployeeController {
 
     @GetMapping
     public ResponseEntity<?> getAllEmployees() {
-        List<EmployeeModel> employees = employeeService.getAllEmployees();
+        List<EmployeeResponse> employees = employeeService.getAllEmployees();
         return JsonResponse.ok(employees);
     }
 
@@ -76,7 +79,21 @@ public class EmployeeController {
                 throw new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED);
             }
         } catch (IllegalArgumentException e) {
-            throw new AppException(ErrorCode.INVALID_UUID_FORMAT); // Bạn có thể thêm lỗi này vào enum ErrorCode
+            throw new AppException(ErrorCode.INVALID_UUID_FORMAT);
         }
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> getAll(
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "dobFrom", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dobFrom,
+            @RequestParam(value = "dobTo", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dobTo,
+            @RequestParam(value = "gender", required = false) Gender gender,
+            @RequestParam(value = "salaryRange", required = false) String salaryRange,
+            @RequestParam(value = "phone", required = false) String phone,
+            @RequestParam(value = "departmentId", required = false) Integer departmentId) {
+
+        List<EmployeeResponse> filteredEmployees = employeeService.getFilteredEmployees(name, dobFrom, dobTo, gender, salaryRange, phone, departmentId);
+        return JsonResponse.ok(filteredEmployees);
     }
 }

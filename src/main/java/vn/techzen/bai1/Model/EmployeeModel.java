@@ -18,4 +18,5 @@ public class EmployeeModel {
      Gender gender;
      double salary;
      String phone;
+     Integer departmentId;
 }
