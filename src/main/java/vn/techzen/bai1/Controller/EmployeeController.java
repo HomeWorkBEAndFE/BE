@@ -3,6 +3,8 @@ package vn.techzen.bai1.Controller;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,8 @@ import vn.techzen.bai1.Service.IEmployeeService;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.PageRequest;
+
 
 @RestController
 @AllArgsConstructor
@@ -29,10 +33,11 @@ public class EmployeeController {
     IEmployeeService employeeService;
 
     @GetMapping
-    public ResponseEntity<?> getAllEmployees() {
-        List<EmployeeResponse> employees = employeeService.getAllEmployees();
+    public ResponseEntity<?> getAllEmployees(Pageable pageable) {
+        Page<EmployeeResponse> employees = employeeService.getAllEmployees(pageable);
         return JsonResponse.ok(employees);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<EmployeeModel>> getEmployee(@PathVariable UUID id) {
@@ -91,13 +96,20 @@ public class EmployeeController {
             @RequestParam(value = "gender", required = false) Gender gender,
             @RequestParam(value = "salaryRange", required = false) String salaryRange,
             @RequestParam(value = "phone", required = false) String phone,
-            @RequestParam(value = "departmentId", required = false) Integer departmentId) {
+            @RequestParam(value = "departmentId", required = false) Integer departmentId,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
 
         if (name != null && name.isEmpty()) name = null;
         if (salaryRange != null && salaryRange.isEmpty()) salaryRange = null;
         if (phone != null && phone.isEmpty()) phone = null;
         if (departmentId != null && departmentId == -1) departmentId = null;
-        List<EmployeeResponse> filteredEmployees = employeeService.getFilteredEmployees(name, dobFrom, dobTo, gender, salaryRange, phone, departmentId);
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<EmployeeResponse> filteredEmployees = employeeService.getFilteredEmployees(
+                name, dobFrom, dobTo, gender, salaryRange, phone, departmentId, pageable);
+
         return JsonResponse.ok(filteredEmployees);
     }
+
 }

@@ -1,5 +1,7 @@
     package vn.techzen.bai1.Repository;
 
+    import org.springframework.data.domain.Page;
+    import org.springframework.data.domain.Pageable;
     import org.springframework.data.jpa.repository.JpaRepository;
     import org.springframework.data.jpa.repository.Query;
     import org.springframework.data.repository.query.Param;
@@ -30,19 +32,21 @@
                 "  (:salaryRange = '10-20' AND e.salary BETWEEN 10000000 AND 20000000) OR " +
                 "  (:salaryRange = 'gte20' AND e.salary >= 20000000)" +
                 ")")
-        List<EmployeeResponse> getFilteredEmployees(
+        Page<EmployeeResponse> getFilteredEmployees(
                 String name,
                 LocalDate dobFrom,
-                 LocalDate dobTo,
+                LocalDate dobTo,
                 Gender gender,
                 String salaryRange,
                 String phone,
-                 Integer departmentId);
+                Integer departmentId,
+                Pageable pageable);
 
         @Query("SELECT new vn.techzen.bai1.Dto.EmployeeResponse(e, d) " +
                 "FROM EmployeeModel e " +
                 "JOIN e.department d")
-        List<EmployeeResponse> findAllWithDepartment();
+        Page<EmployeeResponse> findAllWithDepartment(Pageable pageable);
+
 
     }
 

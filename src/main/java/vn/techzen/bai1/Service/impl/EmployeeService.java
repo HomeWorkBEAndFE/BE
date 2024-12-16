@@ -4,6 +4,8 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import vn.techzen.bai1.Dto.EmployeeResponse;
 import vn.techzen.bai1.Model.EmployeeModel;
@@ -24,9 +26,10 @@ public class EmployeeService implements IEmployeeService {
     IEmployeeRepository employeeRepository;
 
     @Override
-    public List<EmployeeResponse> getAllEmployees() {
-        return employeeRepository.findAllWithDepartment();
+    public Page<EmployeeResponse> getAllEmployees(Pageable pageable) {
+        return employeeRepository.findAllWithDepartment(pageable);
     }
+
 
     @Override
     public EmployeeModel getEmployee(UUID id) {
@@ -47,13 +50,10 @@ public class EmployeeService implements IEmployeeService {
     }
 
     @Override
-    public void deleteEmployee(UUID id) {
-        employeeRepository.deleteById(id);
-    }
-    @Override
-    public List<EmployeeResponse> getFilteredEmployees(
+    public Page<EmployeeResponse> getFilteredEmployees(
             String name, LocalDate dobFrom, LocalDate dobTo, Gender gender,
-            String salaryRange, String phone, Integer departmentId) {
-        return employeeRepository.getFilteredEmployees(name, dobFrom, dobTo, gender, salaryRange, phone, departmentId);
+            String salaryRange, String phone, Integer departmentId, Pageable pageable) {
+        return employeeRepository.getFilteredEmployees(name, dobFrom, dobTo, gender, salaryRange, phone, departmentId, pageable);
     }
+
 }

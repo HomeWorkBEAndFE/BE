@@ -1,5 +1,7 @@
 package vn.techzen.bai1.Service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import vn.techzen.bai1.Dto.EmployeeResponse;
@@ -11,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IEmployeeService {
-    List<EmployeeResponse> getAllEmployees();
+    Page<EmployeeResponse> getAllEmployees(Pageable pageable);
 
     EmployeeModel getEmployee(UUID id);
 
@@ -21,5 +23,7 @@ public interface IEmployeeService {
 
     void deleteEmployee(UUID id);
 
-    List<EmployeeResponse> getFilteredEmployees(String name, LocalDate dobFrom, LocalDate dobTo, Gender gender, String salaryRange, String phone, Integer departmentId);
+    Page<EmployeeResponse> getFilteredEmployees(
+            String name, LocalDate dobFrom, LocalDate dobTo, Gender gender,
+            String salaryRange, String phone, Integer departmentId, Pageable pageable);
 }
