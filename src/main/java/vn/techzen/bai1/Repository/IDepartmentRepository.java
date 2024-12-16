@@ -1,10 +1,7 @@
 package vn.techzen.bai1.Repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import vn.techzen.bai1.Model.DepartmentModel;
 
-import java.util.List;
-
-public interface IDepartmentRepository {
-    DepartmentModel getDepartmentNameById(int id);
-    List<DepartmentModel> getAllDepartment();
+public interface IDepartmentRepository extends JpaRepository<DepartmentModel, Integer> {
 }

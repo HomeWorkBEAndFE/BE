@@ -93,6 +93,10 @@ public class EmployeeController {
             @RequestParam(value = "phone", required = false) String phone,
             @RequestParam(value = "departmentId", required = false) Integer departmentId) {
 
+        if (name != null && name.isEmpty()) name = null;
+        if (salaryRange != null && salaryRange.isEmpty()) salaryRange = null;
+        if (phone != null && phone.isEmpty()) phone = null;
+        if (departmentId != null && departmentId == -1) departmentId = null;
         List<EmployeeResponse> filteredEmployees = employeeService.getFilteredEmployees(name, dobFrom, dobTo, gender, salaryRange, phone, departmentId);
         return JsonResponse.ok(filteredEmployees);
     }

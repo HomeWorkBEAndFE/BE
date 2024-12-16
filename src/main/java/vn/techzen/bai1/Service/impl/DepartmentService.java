@@ -9,6 +9,7 @@ import vn.techzen.bai1.Repository.IDepartmentRepository;
 import vn.techzen.bai1.Service.IDepartmentService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -16,8 +17,14 @@ import java.util.List;
 public class DepartmentService implements IDepartmentService {
     IDepartmentRepository departmentRepository;
 
+    @Override
     public List<DepartmentModel> getAllDepartments(){
-        return departmentRepository.getAllDepartment();
+        return departmentRepository.findAll();
     }
 
+    @Override
+    public DepartmentModel getDepartmentNameById(int id) {
+        Optional<DepartmentModel> department = departmentRepository.findById(id);
+        return department.orElse(null);
+    }
 }
