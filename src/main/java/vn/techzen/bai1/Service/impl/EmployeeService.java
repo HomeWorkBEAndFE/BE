@@ -50,6 +50,11 @@ public class EmployeeService implements IEmployeeService {
     }
 
     @Override
+    public void deleteEmployee(UUID id) {
+        employeeRepository.deleteById(id);
+    }
+
+    @Override
     public Page<EmployeeResponse> getFilteredEmployees(
             String name, LocalDate dobFrom, LocalDate dobTo, Gender gender,
             String salaryRange, String phone, Integer departmentId, Pageable pageable) {

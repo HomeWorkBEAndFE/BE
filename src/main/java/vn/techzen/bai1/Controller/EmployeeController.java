@@ -110,6 +110,7 @@ public class EmployeeController {
                 name, dobFrom, dobTo, gender, salaryRange, phone, departmentId, pageable);
 
         return JsonResponse.ok(filteredEmployees);
+
     }
 
 }
